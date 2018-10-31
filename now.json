@@ -1,0 +1,7 @@
+{
+  "alias": "resolve-node.now.sh",
+  "type": "docker",
+  "features": {
+    "cloud": "v2"
+  }
+}

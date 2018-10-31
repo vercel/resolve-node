@@ -1,7 +1,7 @@
 {
   "name": "resolve-node.now.sh",
   "version": "1.0.0",
-  "description": "",
+  "description": "API endpoint to resolve an arbitrary Node.js version with semver support",
   "main": "server.js",
   "dependencies": {
     "micro": "^9.0.2",
@@ -12,8 +12,5 @@
     "start": "micro server.js"
   },
   "author": "Nathan Rajlich <nate@zeit.co>",
-  "license": "MIT",
-  "now": {
-    "alias": "resolve-node.now.sh"
-  }
+  "license": "MIT"
 }
