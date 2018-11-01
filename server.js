@@ -50,15 +50,3 @@ async function resolveVersion(tag) {
   }
   return Object.assign({ tag }, data.get(version))
 }
-
-/*
-async function main() {
-  console.log(await resolveVersion('4'))
-  console.log(await resolveVersion('5'))
-  console.log(await resolveVersion('6'))
-  console.log(await resolveVersion('7'))
-  console.log(await resolveVersion('8'))
-  console.log(await resolveVersion('9'))
-}
-main()
-*/
