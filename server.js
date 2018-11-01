@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (/json/.test(req.headers.accepts)) {
+  if (/json/.test(req.headers.accept)) {
     return match
   } else {
     res.setHeader('Content-Type', 'text/plain')
