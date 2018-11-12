@@ -3,7 +3,7 @@ const { parse } = require('url')
 const fetch = require('node-fetch')
 const { maxSatisfying } = require('semver')
 
-const INDEX = 'http://nodejs.org/dist/index.json'
+const INDEX = 'https://nodejs.org/dist/index.json'
 
 async function resolveVersion(tag) {
   const lts = tag === 'lts'
