@@ -9,8 +9,15 @@
     "semver": "^5.4.1"
   },
   "scripts": {
-    "start": "micro"
+    "start": "micro",
+    "test": "ava"
   },
   "author": "Nathan Rajlich <nate@zeit.co>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "fetch-mock": "^7.2.5",
+    "proxyquire": "^2.1.0",
+    "test-listen": "^1.1.0"
+  }
 }
