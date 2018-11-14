@@ -6,7 +6,6 @@ const { maxSatisfying } = require('semver')
 const INDEX = 'https://nodejs.org/dist/index.json'
 
 async function resolveVersion(tag) {
-  const lts = tag === 'lts'
   const res = await fetch(INDEX)
 
   if (!res.ok) {
@@ -14,12 +13,17 @@ async function resolveVersion(tag) {
   }
 
   let body = await res.json()
-  if (lts) {
-    body = body.filter(b => b.lts)
+
+  const ltsParts = tag.match(/^lts(?:\/([a-z]+))?$/)
+  const isLts = ltsParts !== null
+  if (isLts) {
+    const codename = ltsParts[1]
+    body = body.filter(b => b.lts && (codename ? b.lts.toLowerCase() === codename : true))
   }
+
   const data = new Map(body.map(b => [b.version, b]))
   const versions = body.map(b => b.version)
-  const matchTag = lts ? '*' : tag
+  const matchTag = isLts ? '*' : tag
   const version = maxSatisfying(versions, matchTag)
   if (!version) {
     return null
