@@ -134,7 +134,7 @@ async function handler(req, res) {
   if (format === 'json') {
     return match
   } else if (format === 'text') {
-    res.setHeader('Content-Type', 'text/plain')
+    res.setHeader('Content-Type', 'text/plain; charset=utf8')
     return match.version
   } else {
     throw new Error(`Unknown "format": ${format}`)
