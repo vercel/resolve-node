@@ -126,8 +126,10 @@ async function handler(req, res) {
   }
 
   if (match.url) {
-    res.setHeader('X-URL', match.url)
+    res.setHeader('X-Download-URL', match.url)
   }
+
+  res.setHeader('X-Node-Version', match.version)
 
   if (format === 'json') {
     return match

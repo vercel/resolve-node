@@ -174,7 +174,8 @@ test('/?platform=darwin&arch=x64&format=json', async (t) => {
   const url = 'https://nodejs.org/dist/v14.13.0/node-v14.13.0-darwin-x64.tar.gz'
   const body = await res.json()
   t.is(res.status, 200)
-  t.is(res.headers.get('x-url'), url)
+  t.is(res.headers.get('x-download-url'), url)
+  t.is(res.headers.get('x-node-version'), 'v14.13.0')
   t.is(body.version, 'v14.13.0')
   t.is(body.url, url)
   t.is(body.unofficial, false)
