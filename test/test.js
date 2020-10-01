@@ -18,7 +18,7 @@ const mockedFetch = fetchMock
   )
   .mock(
     'https://unofficial-builds.nodejs.org/download/release/index.json',
-    readJson(`${__dirname}/fixtures/index.json`)
+    readJson(`${__dirname}/fixtures/unofficial.json`)
   )
 
 const api = proxyquire('..', {
