@@ -118,6 +118,66 @@ test('/6.x?security=true', async (t) => {
 
 test('/13.x?security=true', async (t) => {
   const res = await fetch(`${t.context.url}/13.x?security=true`)
-  t.is(await res.text(), 'v13.8.0')
   t.is(res.status, 200)
+  t.is(await res.text(), 'v13.8.0')
+})
+
+test('/?platform=linux&arch=armv6l', async (t) => {
+  const res = await fetch(`${t.context.url}/?platform=linux&arch=armv6l`, {
+    headers: { accept: 'application/json' },
+  })
+  const body = await res.json()
+  t.is(res.status, 200)
+  t.is(body.version, 'v14.13.0')
+  t.is(
+    body.url,
+    'https://unofficial-builds.nodejs.org/download/release/v14.13.0/node-v14.13.0-linux-armv6l.tar.gz'
+  )
+  t.is(body.unofficial, true)
+  t.is(body.tag, '*')
+})
+
+test('/?platform=linux&arch=armv7l&tag=12&format=json', async (t) => {
+  const res = await fetch(
+    `${t.context.url}/?platform=linux&arch=armv7l&tag=12&format=json`
+  )
+  const body = await res.json()
+  t.is(res.status, 200)
+  t.is(body.version, 'v12.18.4')
+  t.is(
+    body.url,
+    'https://nodejs.org/dist/v12.18.4/node-v12.18.4-linux-armv7l.tar.gz'
+  )
+  t.is(body.unofficial, false)
+  t.is(body.tag, '12')
+})
+
+test('/?platform=linux&arch=x64', async (t) => {
+  const res = await fetch(`${t.context.url}/?platform=linux&arch=x64`, {
+    headers: { accept: 'application/json' },
+  })
+  const body = await res.json()
+  t.is(res.status, 200)
+  t.is(body.version, 'v14.13.0')
+  t.is(
+    body.url,
+    'https://nodejs.org/dist/v14.13.0/node-v14.13.0-linux-x64.tar.gz'
+  )
+  t.is(body.unofficial, false)
+  t.is(body.tag, '*')
+})
+
+test('/?platform=darwin&arch=x64', async (t) => {
+  const res = await fetch(`${t.context.url}/?platform=darwin&arch=x64`, {
+    headers: { accept: 'application/json' },
+  })
+  const body = await res.json()
+  t.is(res.status, 200)
+  t.is(body.version, 'v14.13.0')
+  t.is(
+    body.url,
+    'https://nodejs.org/dist/v14.13.0/node-v14.13.0-darwin-x64.tar.gz'
+  )
+  t.is(body.unofficial, false)
+  t.is(body.tag, '*')
 })

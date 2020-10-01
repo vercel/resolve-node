@@ -54,8 +54,16 @@ async function resolveVersion(tag, opts) {
     body = body.filter((b) => b.security)
   }
 
-  if (opts.platform && opts.arch) {
-    body = body.filter((b) => b.files.includes(`${opts.platform}-${opts.arch}`))
+  const platform = getPlatform(opts.platform)
+  const arch = getArch(opts.arch)
+  if (platform && arch) {
+    let suffix = ''
+    if (platform === 'osx') {
+      suffix = '-tar'
+    } else if (platform === 'win') {
+      suffix = '-zip'
+    }
+    body = body.filter((b) => b.files.includes(`${platform}-${arch}${suffix}`))
   }
   //console.log(body);
 
@@ -77,8 +85,27 @@ async function resolveVersion(tag, opts) {
   return Object.assign({ tag, url }, match)
 }
 
+const PLATFORM_MAP = new Map([['darwin', 'osx']])
+
+function getPlatform(platform) {
+  const p = String(platform || '').toLowerCase()
+  return PLATFORM_MAP.get(p) || p
+}
+
+const ARCH_MAP = new Map([['x86_64', 'x64']])
+
+function getArch(arch) {
+  const a = String(arch || '').toLowerCase()
+  return ARCH_MAP.get(a) || a
+}
+
+function parseAccept(req) {
+  return /json/.test(req.headers.accept) ? 'json' : 'text'
+}
+
 async function handler(req, res) {
   const { pathname, query } = parse(req.url, true)
+  const format = query.format || parseAccept(req)
   const tag = (
     query.tag ||
     decodeURIComponent(pathname.substr(1)) ||
@@ -86,10 +113,8 @@ async function handler(req, res) {
   ).toLowerCase()
 
   query.security = yn(query.security)
-  console.log({ query })
 
   const match = await resolveVersion(tag, query)
-  console.log({ match })
 
   if (!match) {
     res.statusCode = 404
@@ -100,11 +125,17 @@ async function handler(req, res) {
     }
   }
 
-  if (/json/.test(req.headers.accept)) {
+  if (match.url) {
+    res.setHeader('X-URL', match.url)
+  }
+
+  if (format === 'json') {
     return match
-  } else {
+  } else if (format === 'text') {
     res.setHeader('Content-Type', 'text/plain')
     return match.version
+  } else {
+    throw new Error(`Unknown "format": ${format}`)
   }
 }
 
