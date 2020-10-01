@@ -106,11 +106,15 @@ function parseAccept(req) {
 async function handler(req, res) {
   const { pathname, query } = parse(req.url, true)
   const format = query.format || parseAccept(req)
-  const tag = (
+  let tag = (
     query.tag ||
     decodeURIComponent(pathname.substr(1)) ||
     '*'
   ).toLowerCase()
+
+  if (tag === 'latest') {
+    tag = '*'
+  }
 
   query.security = yn(query.security)
 

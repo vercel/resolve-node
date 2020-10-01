@@ -36,7 +36,7 @@ test.afterEach.always(async (t) => {
 
 test('should prefer `text/plain`', async (t) => {
   const { headers } = await fetch(t.context.url)
-  t.is(headers.get('content-type'), 'text/plain')
+  t.is(headers.get('content-type'), 'text/plain; charset=utf8')
 })
 
 test('should honor `application/json`', async (t) => {
@@ -62,6 +62,11 @@ test('should 404 on empty codename (path segment)', async (t) => {
 })
 
 test('/', async (t) => {
+  const res = await fetch(t.context.url)
+  t.is(await res.text(), 'v14.13.0')
+})
+
+test('/latest', async (t) => {
   const res = await fetch(t.context.url)
   t.is(await res.text(), 'v14.13.0')
 })
