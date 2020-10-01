@@ -5,7 +5,7 @@ const { maxSatisfying } = require('semver')
 
 const INDEX = 'https://nodejs.org/dist/index.json'
 
-async function resolveVersion(tag) {
+async function resolveVersion(tag, filters = {}) {
   const res = await fetch(INDEX)
 
   if (!res.ok) {
@@ -19,6 +19,10 @@ async function resolveVersion(tag) {
   if (isLts) {
     const codename = ltsParts[1]
     body = body.filter(b => b.lts && (codename ? b.lts.toLowerCase() === codename : true))
+  }
+
+  if (filters.security) {
+    body = body.filter(b => b.security)
   }
 
   const data = new Map(body.map(b => [b.version, b]))
@@ -38,7 +42,8 @@ async function handler (req, res) {
     decodeURIComponent(pathname.substr(1)) ||
     '*'
   ).toLowerCase()
-  const match = await resolveVersion(tag)
+  const onlyIncludeSecurityReleases = query.security === 'true'
+  const match = await resolveVersion(tag, {security: onlyIncludeSecurityReleases})
 
   if (!match) {
     res.statusCode = 404
