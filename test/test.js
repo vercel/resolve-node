@@ -1,5 +1,6 @@
 'use strict'
 
+const fs = require('fs')
 const fetch = require('node-fetch')
 const fetchMock = require('fetch-mock')
 const listen = require('test-listen')
@@ -7,19 +8,14 @@ const proxyquire = require('proxyquire')
 const micro = require('micro')
 const { test } = require('ava')
 
+const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'))
+
 const mockedFetch = fetchMock
   .sandbox()
-  .mock('https://nodejs.org/dist/index.json', [
-    { version: 'v13.0.1', lts: false, security: false },
-    { version: 'v12.13.0', lts:'Erbium', security: false},
-    { version: 'v12.8.1', lts: false, security: true},
-    { version: 'v10.13.0', lts: 'Dubnium', security: false },
-    { version: 'v8.12.0', lts: 'Carbon', security: false },
-    { version: 'v8.11.4', lts: 'Carbon', security: true },
-    { version: 'v6.14.4', lts: 'Boron', security: true }
-  ])
+  .mock('https://nodejs.org/dist/index.json', readJson(`${__dirname}/fixtures/index.json`))
+  .mock('https://unofficial-builds.nodejs.org/download/release/index.json', readJson(`${__dirname}/fixtures/index.json`))
 
-const api = proxyquire('.', {
+const api = proxyquire('..', {
   'node-fetch': mockedFetch
 })
 
@@ -46,7 +42,7 @@ test('should honor `application/json`', async t => {
 
 test('should prefer query param over path segment', async t => {
   const res = await fetch(`${t.context.url}/lts/Dubnium?tag=6.x`)
-  t.is(await res.text(), 'v6.14.4')
+  t.is(await res.text(), 'v6.17.1')
 })
 
 test('should 404 on empty codename (query param)', async t => {
@@ -61,32 +57,32 @@ test('should 404 on empty codename (path segment)', async t => {
 
 test('/', async t => {
   const res = await fetch(t.context.url)
-  t.is(await res.text(), 'v13.0.1')
+  t.is(await res.text(), 'v14.13.0')
 })
 
 test('/lts', async t => {
   const res = await fetch(`${t.context.url}/lts`)
-  t.is(await res.text(), 'v12.13.0')
+  t.is(await res.text(), 'v12.18.4')
 })
 
 test('/lts/Carbon', async t => {
   const res = await fetch(`${t.context.url}/lts/Carbon`)
-  t.is(await res.text(), 'v8.12.0')
+  t.is(await res.text(), 'v8.17.0')
 })
 
 test('/8.x', async t => {
   const res = await fetch(`${t.context.url}/8.x`)
-  t.is(await res.text(), 'v8.12.0')
+  t.is(await res.text(), 'v8.17.0')
 })
 
 test('/?tag=lts', async t => {
   const res = await fetch(`${t.context.url}/?tag=lts`)
-  t.is(await res.text(), 'v12.13.0')
+  t.is(await res.text(), 'v12.18.4')
 })
 
 test('/?tag=lts/Dubnium', async t => {
   const res = await fetch(`${t.context.url}/?tag=lts/Dubnium`)
-  t.is(await res.text(), 'v10.13.0')
+  t.is(await res.text(), 'v10.22.1')
 })
 
 test('/?tag=8.11.x', async t => {
@@ -96,25 +92,26 @@ test('/?tag=8.11.x', async t => {
 
 test('/?security=true', async t => {
   const res = await fetch(`${t.context.url}/?security=true`)
-  t.is(await res.text(), 'v12.8.1')
+  t.is(await res.text(), 'v14.11.0')
 })
 
 test('/lts?security=true', async t => {
   const res = await fetch(`${t.context.url}/lts?security=true`)
-  t.is(await res.text(), 'v8.11.4')
+  t.is(await res.text(), 'v12.18.4')
 })
 
 test('/lts/Carbon?security=true', async t => {
   const res = await fetch(`${t.context.url}/lts/Carbon?security=true`)
-  t.is(await res.text(), 'v8.11.4')
+  t.is(await res.text(), 'v8.17.0')
 })
 
 test('/6.x?security=true', async t => {
   const res = await fetch(`${t.context.url}/6.x?security=true`)
-  t.is(await res.text(), 'v6.14.4')
+  t.is(await res.text(), 'v6.17.0')
 })
 
 test('/13.x?security=true', async t => {
-  const { status } = await fetch(`${t.context.url}/13.x?security=true`)
-  t.is(status, 404)
+  const res = await fetch(`${t.context.url}/13.x?security=true`)
+  t.is(await res.text(), 'v13.8.0')
+  t.is(res.status, 200)
 })
