@@ -6,7 +6,8 @@
   "dependencies": {
     "micro": "^9.0.2",
     "node-fetch": "^2.6.1",
-    "semver": "^5.4.1"
+    "semver": "^5.4.1",
+    "yn": "^4.0.0"
   },
   "scripts": {
     "start": "micro",
