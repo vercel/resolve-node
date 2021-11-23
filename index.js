@@ -94,7 +94,7 @@ async function resolveVersion(tag, opts) {
       : 'https://nodejs.org/dist';
     url = `${urlBase}/${match.version}/node-${match.version}-${opts.platform}-${arch}.tar.gz`;
   }
-  return Object.assign({ tag, url }, match);
+  return Object.assign({ tag, url, platform: opts.platform, arch }, match);
 }
 
 const PLATFORM_MAP = new Map([['darwin', 'osx']]);
@@ -139,6 +139,14 @@ async function handler(req, res) {
       query,
       error: 'No match found',
     };
+  }
+
+  if (match.platform) {
+    res.setHeader('X-Platform', match.platform);
+  }
+
+  if (match.arch) {
+    res.setHeader('X-Arch', match.arch);
   }
 
   if (match.url) {

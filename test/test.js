@@ -197,6 +197,8 @@ test('/16?platform=darwin&arch=arm64&format=json', async (t) => {
   t.is(res.status, 200);
   t.is(res.headers.get('x-download-url'), url);
   t.is(res.headers.get('x-node-version'), 'v16.13.0');
+  t.is(res.headers.get('x-platform'), 'darwin');
+  t.is(res.headers.get('x-arch'), 'arm64');
   t.is(body.version, 'v16.13.0');
   t.is(body.url, url);
   t.is(body.unofficial, false);
@@ -216,6 +218,8 @@ test('/14?platform=darwin&arch=arm64&format=json', async (t) => {
   t.is(res.status, 200);
   t.is(res.headers.get('x-download-url'), url);
   t.is(res.headers.get('x-node-version'), 'v14.18.1');
+  t.is(res.headers.get('x-platform'), 'darwin');
+  t.is(res.headers.get('x-arch'), 'x64');
   t.is(body.version, 'v14.18.1');
   t.is(body.url, url);
   t.is(body.unofficial, false);
