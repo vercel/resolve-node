@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "micro": "^9.0.2",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "semver": "^5.4.1",
     "yn": "^4.0.0"
   },
