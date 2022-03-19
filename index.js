@@ -120,7 +120,7 @@ async function handler(req, res) {
   const format = query.format || parseAccept(req);
   let tag = (
     query.tag ||
-    decodeURIComponent(pathname.substr(1)) ||
+    decodeURIComponent(pathname.slice(1)) ||
     '*'
   ).toLowerCase();
 
